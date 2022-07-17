@@ -1,0 +1,33 @@
+{
+  "name": "Code_Editor",
+  "version": "1.0.0",
+  "description": "A code editor capable of running html.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=code_editor.png --prune=true --out=release-builds",
+    "package-win": "electron-packager . --overwrite --platform=win64 --icon=code_editor.png --prune=true --out=release-builds",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=code_editor.png --prune=true --out=release-builds",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.projects.code_editor",
+    "linux": {
+      "target": "deb"
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "code_editor.png"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^17.1.2",
+    "electron-builder": "^22.14.13",
+    "electron-packager": "^15.4.0",
+    "font-awesome": "^4.7.0"
+  }
+}

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Code Editor</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <!-- <script src="https://www.w3schools.com/lib/w3codecolor.js"></script> -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.10.4/brython.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.10.4/brython_stdlib.js"></script>
+  <script src="general.js"></script>
+  <script src="fs.js"></script>
+  <script src="snippets.js"></script>
+  <link rel="stylesheet" src="style.css">
+  </script>
+  <link rel="icon" href="" type="image/png" id="icon_link">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body class="" onload="on_load()" style="min-width: 600px;background-color:#202020;" onbeforeunload="update()">
+  <div id="editor" style="display:block;" class="w3-animate-left">
+    <div class="w3-bar w3-dark-grey" id="topbar"
+      style="height:7vh;display: block;width:100%; border-bottom:1px solid grey;">
+      <div class="w3-center unselectable">
+        <button id="new_button" class="w3-bar-item w3-button" onclick="new_file()"
+          style="background-color:#505050;font-size:18px;height:7vh;border-right:1px solid grey;"
+          title="New File(Alt+N)"><i class="fa fa-file"></i></button>
+        <label for="file_input" id="file_input_label" class="w3-bar-item w3-small w3-button "
+          style="width:40px;padding-left: 8px;padding-top:2vh;background-color:#505050;font-size:18px;height:7vh;border-right:1px solid grey;"
+          title="Open File(Alt+O)"><i style="font-size: 22px;" class="fa fa-folder-open"></i></label>
+        <input type="file" id="file_input" onchange="open_file()" class="w3-bar-item"
+          style="width:10%; padding-left:0px; display:none" />
+        <button class="w3-bar-item w3-button " onclick="download_file()" id="download_btn"
+          style="background-color:#505050;font-size:18px;height:7vh;border-right:1px solid grey;"
+          title="Save/Download File(Alt+S)"><i class="fa fa-download"></i></button>
+        <button class="w3-bar-item w3-button " onclick="run_code()" id="run_code_btn"
+          style="background-color:#505050;height:7vh;border-right:1px solid grey;"
+          title="Run - Only HTML and Python(Alt+R)">Run</button>
+        <input type="text" class="w3-text-white  w3-bar-item" id="file_name_selector" placeholder="File Name"
+          style="height:7vh;width:10%; background-color:#505050;border-right:1px solid grey;"
+          onchange="file_name_init()" title="File Name">
+        <select class=" w3-text-white w3-select  w3-bar-item" id="file_type_selector"
+          style="height:7vh;width:8%; background-color:#505050; padding-right:20px;border-right:1px solid grey;"
+          onchange="file_type_init()" title="File Type">
+          <option value="plain">Plain Text</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="xml">XML</option>
+          <option value="javascript">Javascript</option>
+          <option value="python">Python</option>
+          <option value="java">Java</option>
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+          <option value="cs">C#</option>
+        </select>
+        <select class="w3-text-white w3-select  w3-bar-item" id="font_size_selector"
+          style="height:7vh;width:10%; background-color:#505050;border-right:1px solid grey;"
+          onchange="font_size_init()" title="Font Size">
+          <option value="15">15(Default)</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+          <option value="19">19</option>
+          <option value="20">20</option>
+          <option value="22">22</option>
+          <option value="24">24</option>
+          <option value="26">26</option>
+          <option value="28">28</option>
+          <option value="32">32</option>
+          <option value="36">36</option>
+          <option value="40">40</option>
+          <option value="46">46</option>
+          <option value="52">52</option>
+          <option value="58">58</option>
+          <option value="66">66</option>
+          <option value="72">72</option>
+          <option value="80">80</option>
+          <option value="88">88</option>
+          <option value="96">96</option>
+        </select>
+        <input type="text" list="fonts" class="w3-select w3-text-white  w3-bar-item" id="font_family_selector"
+          style="border-right:1px solid grey;background-color:#505050; height:7vh; width:10%; padding-left:10px"
+          onchange="font_family_init()" placeholder="Font Family"
+          title="Font Family - Enter a font name or pick one of the default ones">
+        <datalist id="fonts">
+          <option value="Arial">Arial</option>
+          <option value="Carlito">Carlito</option>
+          <option value="Nimbus Roman">Nimbus Roman</option>
+          <option value="Abyssinica SIL">Abyssinica SIL</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Helvetica">Helvetica</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Ubuntu">Ubuntu</option>
+          <option value="Ubuntu Mono">Ubuntu Mono</option>
+          <option value="DejaVu Serif">DejaVu Serif</option>
+          <option value="Noto Mono">Noto Mono</option>
+          <option value="FreeMono">FreeMono</option>
+          <option value="Monospace">Monospace</option>
+        </datalist>
+        </input>
+        <span id="popup_window">
+          <label for="toggle_checkbox" class="w3-bar-item" style="width:189px;">Open in popup window:</label>
+          <input type="checkbox" class="w3-check w3-bar-item w3-large" style=" outline:none; border:none"
+            id="toggle_checkbox" />
+        </span>
+        <button class="w3-bar-item w3-button " onclick="toggle_topbar()"
+          style="float:right;background-color:#505050;font-size:18px;height:7vh;border:1px solid grey;width:3.5%"
+          title="Hide the topbar(Alt+F)" id="hide_topbar_button"><i class="fa fa-chevron-up"></i></button>
+        <button class="w3-bar-item w3-button " onclick="open_settings()"
+          style="float:right;background-color:#505050;font-size:20px;height:7vh;border:1px solid grey;width:3.5%"
+          title="Open Settings(Alt+Shift+S)" id="open_settings_button"><i class="fa fa-cog"></i></button>
+      </div>
+    </div>
+    <div class="w3-bar w3-dark-grey unselectable" id="btmbar"
+      style="height:7vh; display: block; width:100%; border-bottom: 1px solid grey; top:7vh;">
+      <span style="padding-top:1.65vh; float:left" class="w3-bar-item"
+        onclick="alert('Keyboard Shortcuts:\nSave:Alt+S\nNew:Alt+N\nOpen:Alt+O\nRun(HTML and Python):Alt+R\nToggle Toolbar:Alt+F\nTogglt Snippets Bar:Alt+T\nOpen/Close Settings Tab:Alt+Shift+S\nChange Textarea to Output ratio:\n  Alt+[0-9] changes ratio to [number]*10\n  Ex: Alt+3 Changes ratio to 30:70')"
+        title="Click one to add the respective code to the editor" id="Snippets_Button">Snippets:</span>
+      <div class="w3-dropdown-hover">
+        <button class="w3-button" id="HTML_Snippet_Button"
+          style="float:right;background-color:#505050;font-size:18px;height:7vh;border:1px solid grey;">HTML</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border"
+          style="color: white;background-color: #606060;overflow-y: scroll; width:200; height: 300px;top:14vh">
+          <div class="">
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('html')">HTML Body</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('w3css')">W3.CSS Link</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('style_tag')">&lt;style&gt;</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('div_tag')">&lt;div&gt;</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('span_tag')">&lt;span&gt;</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('button_tag')">&lt;button&gt;</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('p_tag')">&lt;p&gt;</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('a_tag')">&lt;a&gt;</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('select_tag')">&lt;select&gt;</button>
+          </div>
+          <hr>
+          <div class="">
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('style_attr')">style=''</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('class_attr')">class=''</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('onclick_attr')">onclick=''</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('title_attr')">title=''</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('id_attr')">id=''</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('src_attr')">src=''</button>
+            <button class="unselectable w3-bar-item w3-button" onclick="snippets('onload_attr')">onload=''</button>
+            <button class="unselectable w3-bar-item w3-button"
+              onclick="snippets('onbeforeunload_attr')">onbeforeunload=''</button>
+          </div>
+        </div>
+      </div>
+      <div class="w3-dropdown-hover">
+        <button class="w3-button" id="JavaScript_Snippet_Button"
+          style="float:right;background-color:#505050;font-size:18px;height:7vh;border:1px solid grey;">Javascript</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border"
+          style="color: white;background-color: #606060;overflow-y: scroll; width:100; height: 300px;top:14vh">
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_func')">function</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_if')">if</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_ifel')">if/else</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_elseif')">elseif</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_while')">while</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_for')">for</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_try_catch')">try...catch</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_conlog')">console.log()</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_getid')">getElementById</button>
+          <button class="unselectable w3-bar-item w3-button"
+            onclick="snippets('js_getclass')">getElementsByClassName</button>
+          <button class="unselectable w3-bar-item w3-button"
+            onclick="snippets('js_gettag')">getElementsByTagName</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('js_querysel')">querySelector</button>
+        </div>
+      </div>
+      <div class="w3-dropdown-hover">
+        <button class="w3-button" id="Python_Snippet_Button"
+          style="float:right;background-color:#505050;font-size:18px;height:7vh;border:1px solid grey;">Python</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border"
+          style="color: white;background-color: #606060;overflow-y: scroll; width:100; height: 300px;top:14vh">
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_func')">function</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_if')">if</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_ifel')">if/else</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_elseif')">elseif</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_while')">while</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_for')">for</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_try_except')">try...except</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_class')">class</button>
+          <button class="unselectable w3-bar-item w3-button" onclick="snippets('py_ifnameequalsmain')">if __name__ ==
+            "__main__"</button>
+        </div>
+      </div>
+      <button class="w3-bar-item w3-button " onclick="toggle_btmbar()"
+        style="float:right;background-color:#505050;font-size:18px;height:7vh;border:1px solid grey;width:3.5%"
+        title="Hide the Snippets Bar(Alt+T)" id="hide_btmbar_button"><i class="fa fa-chevron-up"></i></button>
+    </div>
+    <div id="line_numbers"
+      style="border-right: 1px solid grey;text-align:right;overflow: hidden;float:left;background-color:#303030; width:2%; height:86vh; resize:none; padding-right:1px;"
+      class="unselectable w3-text-white">
+      1
+    </div>
+    <div>
+      <textarea
+        style="width:49%;height:86vh;float:left; background-color:#303030;text-align:left;padding:2px; color:black"
+        class="w3-text-white" id="textArea" placeholder="Save:Alt+S
+    New:Alt+N
+    Open:Alt+O
+    Run(HTML and Python):Alt+R
+    Toggle Toolbar:Alt+F
+    Toggle Snippets Bar:Alt+T
+    Open/Close Settings Tab:Alt+Shift+S
+    Change Textarea to Output ratio:
+      Alt+[0-9] changes ratio to [number]*10
+      Ex: Alt+3 Changes ratio to 30:70')">
+              </textarea>
+      <iframe id="output"
+        style="height:86vh; width:49%; float:left; top:7%; background-color:white; outline:1px ridge white;"></iframe>
+    </div>
+  </div>
+  <div class="w3-container w3-animate-right w3-display-container w3-dark-grey" style="display:none;" id="settings_tab">
+    <div class="w3-bar">
+      <button class="w3-bar-item w3-display-topleft w3-button" onclick="close_settings()" id="settings_close_btn"
+        style="background-color:#505050;font-size:13px;height:7vh;border:1px solid grey;"
+        title="Go back to the editor(Alt+Shift+S)"><i class="material-icons">arrow_back</i></button>
+    </div>
+    <br><br>
+    <p style="font-size:30px;">General</p>
+    <div id="textarea_width_container">
+      <p style="font-size: 20px;">Editor Width</p>
+      <label for="textarea_width" style="padding-right:3px" class="w3-bar-item">Select the width of the editor:</label>
+      <span id="textarea_width_val" class="w3-bar-item" style="padding-left:3px; padding-right:4px">50%</span>
+      <span style="padding-top:10px;">
+        <input type="range" id="textarea_width" max="100" min="0" step="5" class="w3-bar-item" style="width:150px;"
+          onchange="textarea_width()" title="Control the ratio of the editor and the output window" />
+      </span>
+    </div>
+    <p style="font-size:20px;">Text Editor Mode</p>
+    <p style="font-size:15px;"><input type="checkbox" class="w3-check" id="text_editor_mode"
+        onchange="if(this.checked){textarea_width(100);document.getElementById('textarea_width_container').style.display = 'none';}else{textarea_width(50);document.getElementById('textarea_width_container').style.display = 'block';}"
+        name="text_editor_mode" /><label for="text_editor_mode"> Hides output window to make more space for you to
+        type.</label></p>
+    <p style="font-size:20px;">Turn Off Line Numbers</p>
+    <p style="font-size:15px;"><input type="checkbox" class="w3-check" id="turn_off_line_numbers"
+        onchange="if(this.checked){turn_off_line_numbers = true; line_numbers.innerHTML = '';}else{turn_off_line_numbers = false;}"
+        name="turn_off_line_numbers" /><label for="turn_off_line_numbers"> The webpage can get really slow when handling
+        large files. Turn off line numbers to prevent this.</label></p>
+    <hr style="width:50%">
+    <p style="font-size:30px;">Theme</p>
+    <p style="font-size:20px;">Choose a color that will be applied to the toolbars and the editor:
+      <select class="w3-select w3-dark-grey" id="theme" onchange="change_theme(this.value)"
+        style="width:10%; font-size:15px;">
+        <option value="grey" selected>Grey</option>
+        <option value="black">Black</option>
+        <option value="white" disabled>White</option>
+        <option value="blue">Blue</option>
+        <option value="red">Red</option>
+        <option value="custom">Custom</option>
+      </select>
+    <div id="custom_theme" style="display:none;">
+      <p style="font-size:20px">Custom Theme:</p>
+      <p style="font-size:14px"><span style="color:#ffff00;">Warning:</span> Do not choose a light background color
+        because it will clash with the font color of the editor which is always white. (Font colors of textareas cannot
+        be changed)</p>
+      <label for="custom_theme_picker">Background Color: </label>
+      <input type="color" id="custom_theme_picker" onchange="custom_theme()" /><br><br>
+      <label for="custom_theme_font_color">Font Color: </label>
+      <input type="color" id="custom_theme_font_color" onchange="custom_theme()" />
+    </div>
+    </p>
+    <br>
+    <hr style="width:50%">
+    <p style="font-size:30px;">Keyboard Shortcuts</p>
+    <p style="font-size:15px;">New File:Alt+N<br>
+      Open File:Alt+O<br>
+      Run(Only HTML and Python Files):Alt+R<br>
+      Toggle Toolbar:Alt+F<br>
+      Toggle Snippets Bar:Alt+T<br>
+      Open/Close Settings:Alt+Shift+S</br>
+      Change Textarea to Output ratio:<br>
+      Alt+[0-9] changes ratio to [number]*10<br>
+      Ex: Alt+3 Changes ratio to 30:70
+    </p>
+    <br>
+    <hr style="width:50%">
+    <div class="w3-panel w3-card w3-dark-grey w3-display-container w3-container w3-round"
+      style="height: 725px;width:80%; padding-top:7px; padding-right:7px; padding-bottom:0px"
+      id="source_code_disp_container">
+      <span style="font-size:25px">Code Editor Source Code</span><button class="w3-button w3-display;"
+        style="height:40px;background-color:#505050;font-size:13px;border:1px solid grey; float:right;"
+        onclick="copy_source_code()" title="Copy Code"><i class="material-icons">content_copy</i></button>
+      <br>
+      <p style="font-size:15px; color:white;">View the source code of the webpage. Still undergoing development.<span
+          style="font-size:10px"> (It might take some time to go through the whole thing. There are over 1100
+          lines.)</span></p>
+      <p id="stats"></p>
+      <p style="padding-top:0px;">
+        <code type='text/html tag start' style="background-color:#202020;">
+                <xmp id="source_code_disp" class="w3-code htmlHigh notranslate" style="height:80%; width:99%;background-color:#202020; overflow:auto;"></xmp>
+              </code>
+      </p>
+    </div>
+    <br>
+    <br>
+
+    <!--
+      <p style="font-size:30px; color:white;">Editor</p>
+      <p style="font-size:20px; color:white;">Editor Background Color</p>
+      <p style="font-size:15px; color:white;">Choose a background color for the editor:</p>
+      <p style="font-size:10px; color:white;"><span style="color:yellow;">Warning:</span> Do not choose a light color. The font color will clash with the background color (the font color cannot be changed).</p>
+      <input type="color" id="editor_bg_color_picker" width="100px;"/>
+      <br><br>
+      <button class="w3-button" style="background-color:#505050;font-size:13px;height:7vh;border:1px solid grey;" onclick="change_editor_bg()">Submit</button>
+      -->
+
+  </div>
+</body>
+
+</html>
